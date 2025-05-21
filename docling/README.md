@@ -1,40 +1,37 @@
-# 🛠️ Python 3.13 Project Setup with `uv` and `docling` on macOS (Apple M2)
+# 🛠️ Python 3.12 Project Setup with `uv` and `docling` on RHEL 8.10
 
-This README documents the full setup process I followed to:
+This README documents the setup process to:
 
-- Install a **recent Python release** (3.13.x) on macOS with an Apple M2 chip
-- Set up a **clean, modern Python project environment** using [`uv`](https://github.com/astral-sh/uv) — a fast, Rust-based tool for Python package and venv management
-- Fix common **SSL certificate errors** in custom Python builds
-- Install and use [`docling`](https://github.com/docling/docling) to convert a **PDF file into Markdown**
+* Install **Python 3.12.8** via RHEL package manager
+* Set up a clean, modern Python environment using [`uv`](https://github.com/astral-sh/uv) — a fast Rust-based tool for managing packages and virtual environments
+* Install and use [`docling`](https://github.com/docling/docling) to convert **PDF files into Markdown**
 
-This guide is intended for developers who want to work with newer versions of Python and use `uv` for efficient project management, while ensuring HTTPS, OCR, and package installations work smoothly on macOS.
+This guide is intended for RHEL users who want to use a newer Python version with minimal hassle, and leverage `uv` for modern dependency management.
 
 ---
 
-## 🐍 Step 1: Install Python 3.13.x on macOS (Apple M2)
+## 🐍 Step 1: Install Python 3.12.8 via DNF
 
-To get started, I installed Python **3.13.2**, which is one or two versions behind the latest stable release — this avoids unexpected issues with pre-releases or bleeding-edge versions.
+If you're using **RHEL 9.4 or later**, Python 3.12 is available directly in the package repositories.
 
-### ✅ Instructions
+### ✅ Install Python 3.12:
 
-1. Go to the official Python download page for macOS:  
-   👉 [https://www.python.org/downloads/macos/](https://www.python.org/downloads/macos/)
+```bash
+sudo dnf install python3.12
+```
 
-2. Under the version list (e.g., Python 3.13.2), download:
-   - **macOS 64-bit universal2 installer** (`python-3.13.2-macos11.pkg`)
+### ✅ Verify installation:
 
-3. Once downloaded:
-   - Double-click the `.pkg` installer
-   - Complete the installation through the GUI installer
+```bash
+python3.12 --version
+# Output should be: Python 3.12.8
+```
 
-4. Verify that Python 3.13 is installed correctly:
-   ```bash
-   python3.13 --version
-
+---
 
 ## ⚙️ Step 2: Install `uv` — A Fast Python Package Manager
 
-`uv` is a high-performance tool for managing Python environments and dependencies.
+[`uv`](https://github.com/astral-sh/uv) is a modern tool that replaces pip, venv, and virtualenv with faster performance and dependency resolution.
 
 ### 1. Install `uv` using the official script:
 
@@ -42,61 +39,35 @@ To get started, I installed Python **3.13.2**, which is one or two versions behi
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-### 2. Add it to your PATH:
+### 2. Add it to your shell profile (if not already):
 
 ```bash
-export PATH="$HOME/.local/bin:$PATH"
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
 ```
 
-### 3. Verify `uv` is available:
+### 3. Confirm `uv` is installed:
 
 ```bash
-which uv
 uv --version
 ```
 
 ---
 
-## 🧪 Step 3: Create a Virtual Environment with Python 3.13
+## 🧪 Step 3: Create a Virtual Environment with Python 3.12
 
 ```bash
-uv venv --python /usr/local/bin/python3.13
+uv venv --python $(which python3.12)
 source .venv/bin/activate
 ```
 
-This creates and activates a `.venv/` using Python 3.13.
+This creates and activates a virtual environment in `.venv/`.
 
 ---
 
-## 🔐 Step 4: Fix SSL Certificate Issues (Common in Custom Python Installs)
+## 📄 Step 4: Install `docling` and Convert a PDF to Markdown
 
-Python 3.13 installed manually may not trust macOS system certificates. To fix this:
-
-### 1. Install `certifi` using `uv`:
-
-```bash
-uv pip install --upgrade certifi
-```
-
-### 2. Get the path to the certifi CA bundle:
-
-```bash
-python3.13 -m certifi
-```
-
-### 3. Set the SSL certificate environment variable:
-
-```bash
-export SSL_CERT_FILE=$(python3.13 -m certifi)
-```
-
-This ensures `urllib`, `requests`, and other tools using HTTPS work correctly.
-
----
-
-## 📄 Step 5: Install `docling` and Convert a PDF to Markdown
-
-`docling` is a document processing tool that can extract structure and text from PDFs.
+[`docling`](https://github.com/docling/docling) is a document processing tool that extracts structured content from PDFs and outputs Markdown.
 
 ### 1. Install `docling`:
 
@@ -104,24 +75,18 @@ This ensures `urllib`, `requests`, and other tools using HTTPS work correctly.
 uv pip install docling
 ```
 
-### 2. Run `docling` on a PDF:
+### 2. Convert a PDF:
 
 ```bash
-docling 3636218.3636235.pdf
+docling path/to/your-document.pdf
 ```
 
-On first use, it will download OCR models via EasyOCR. After setup, it extracts text and outputs Markdown based on document structure.
+The first time it runs, `docling` will download OCR models. After setup, it outputs a `.md` file with embedded images and structured content.
 
 ---
 
 ## ✅ Final Notes
 
-* These steps were tested on macOS (Apple M2) with Python 3.13.2
-* `uv` helps keep everything fast and isolated
-* SSL fixes are required if you don’t use Homebrew or system Python builds
-
----
-
-Feel free to fork or adapt this workflow for your own Python projects!
-
-```
+* Python 3.12.8 installed cleanly via `dnf` — no need to compile from source
+* `uv` simplifies virtual environments and dependency management
+* `docling` enables quick conversion of PDFs to clean Markdown
