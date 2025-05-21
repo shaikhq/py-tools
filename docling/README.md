@@ -8,7 +8,7 @@ This guide walks you through setting up a modern Python development environment 
 * Installing Python 3.13.x
 * Creating a clean project environment using [`uv`](https://github.com/astral-sh/uv)
 * Fixing common SSL issues with custom Python builds
-* Installing and running [`docling`](https://github.com/docling/docling) to convert PDFs to Markdown
+* Installing and running [`docling`](https://github.com/docling-project/docling) to convert PDFs to Markdown
 
 ---
 
