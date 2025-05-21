@@ -116,7 +116,7 @@ To convert PDF files using `docling`, run the included notebook:
 1. Open the notebook:
 
    ```bash
-   jupyter notebook docling/pdf-2-md.ipynb
+   jupyter notebook docling/pdf-to-md.ipynb
    ```
 
 2. Follow the notebook instructions to convert your PDF to Markdown.
