@@ -1,92 +1,125 @@
-# 🛠️ Python 3.12 Project Setup with `uv` and `docling` on RHEL 8.10
-
-This README documents the setup process to:
-
-* Install **Python 3.12.8** via RHEL package manager
-* Set up a clean, modern Python environment using [`uv`](https://github.com/astral-sh/uv) — a fast Rust-based tool for managing packages and virtual environments
-* Install and use [`docling`](https://github.com/docling/docling) to convert **PDF files into Markdown**
-
-This guide is intended for RHEL users who want to use a newer Python version with minimal hassle, and leverage `uv` for modern dependency management.
 
 ---
 
-## 🐍 Step 1: Install Python 3.12.8 via DNF
+# 🛠️ Python 3.13 + uv + docling Setup on macOS (Apple M2)
 
-If you're using **RHEL 9.4 or later**, Python 3.12 is available directly in the package repositories.
+This guide walks you through setting up a modern Python development environment on macOS (Apple Silicon), including:
 
-### ✅ Install Python 3.12:
-
-```bash
-sudo dnf install python3.12
-```
-
-### ✅ Verify installation:
-
-```bash
-python3.12 --version
-# Output should be: Python 3.12.8
-```
+* Installing Python 3.13.x
+* Creating a clean project environment using [`uv`](https://github.com/astral-sh/uv)
+* Fixing common SSL issues with custom Python builds
+* Installing and running [`docling`](https://github.com/docling/docling) to convert PDFs to Markdown
 
 ---
 
-## ⚙️ Step 2: Install `uv` — A Fast Python Package Manager
+## 🐍 Step 1: Install Python 3.13.x
 
-[`uv`](https://github.com/astral-sh/uv) is a modern tool that replaces pip, venv, and virtualenv with faster performance and dependency resolution.
+Download and install the latest stable **Python 3.13.x** for macOS:
 
-### 1. Install `uv` using the official script:
+1. Visit: [https://www.python.org/downloads/macos/](https://www.python.org/downloads/macos/)
+2. Under the Python 3.13.x section, download:
 
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
+   * **macOS 64-bit universal2 installer** (`python-3.13.x-macos11.pkg`)
+3. Run the `.pkg` installer and follow the GUI instructions.
+4. Confirm installation:
 
-### 2. Add it to your shell profile (if not already):
-
-```bash
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
-```
-
-### 3. Confirm `uv` is installed:
-
-```bash
-uv --version
-```
+   ```bash
+   python3.13 --version
+   ```
 
 ---
 
-## 🧪 Step 3: Create a Virtual Environment with Python 3.12
+## ⚙️ Step 2: Install `uv` – Fast Python Package Manager
 
-```bash
-uv venv --python $(which python3.12)
-source .venv/bin/activate
-```
+[`uv`](https://github.com/astral-sh/uv) is a high-performance, Rust-based tool for managing Python packages and environments.
 
-This creates and activates a virtual environment in `.venv/`.
+1. Install `uv`:
+
+   ```bash
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
+2. Add `uv` to your shell’s `PATH` (if not already):
+
+   ```bash
+   export PATH="$HOME/.local/bin:$PATH"
+   ```
+3. Verify installation:
+
+   ```bash
+   which uv
+   uv --version
+   ```
 
 ---
 
-## 📄 Step 4: Install `docling` and Convert a PDF to Markdown
+## 🧪 Step 3: Create and Activate Virtual Environment
 
-[`docling`](https://github.com/docling/docling) is a document processing tool that extracts structured content from PDFs and outputs Markdown.
+1. Create a virtual environment using Python 3.13:
 
-### 1. Install `docling`:
+   ```bash
+   uv venv --python=/usr/local/bin/python3.13 myenv
+   ```
+2. Activate it:
+
+   ```bash
+   source myenv/bin/activate
+   ```
+
+---
+
+## 🔐 Step 4: Fix SSL Certificate Issues
+
+Custom Python installations may not use macOS’s trusted certificates. Fix this as follows:
+
+### Option A: Run the bundled macOS certificate installer
+
+```bash
+/Applications/Python\ 3.13/Install\ Certificates.command
+```
+
+### Option B: Use `certifi` to set up a trusted CA bundle manually
+
+1. Install `certifi`:
+
+   ```bash
+   uv pip install --upgrade certifi
+   ```
+2. Set SSL cert environment variable:
+
+   ```bash
+   export SSL_CERT_FILE=$(python3.13 -m certifi)
+   ```
+
+---
+
+## 📦 Step 5: Install docling and Dependencies
+
+With your virtual environment activated:
 
 ```bash
 uv pip install docling
+uv pip install ipykernel --upgrade --force-reinstall
 ```
 
-### 2. Convert a PDF:
+Download required OCR models for `docling`:
 
 ```bash
-docling path/to/your-document.pdf
+docling-tools models download
 ```
-
-The first time it runs, `docling` will download OCR models. After setup, it outputs a `.md` file with embedded images and structured content.
 
 ---
 
-## ✅ Final Notes
+## 📄 Step 6: Run the PDF to Markdown Notebook
 
-* Python 3.12.8 installed cleanly via `dnf` — no need to compile from source
-* `uv` simplifies virtual environments and dependency management
-* `docling` enables quick conversion of PDFs to clean Markdown
+To convert PDF files using `docling`, run the included notebook:
+
+1. Open the notebook:
+
+   ```bash
+   jupyter notebook docling/pdf-2-md.ipynb
+   ```
+
+2. Follow the notebook instructions to convert your PDF to Markdown.
+
+> ✅ Tip: Ensure your virtual environment is selected as the active kernel in Jupyter.
+
